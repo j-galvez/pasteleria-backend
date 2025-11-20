@@ -1,5 +1,5 @@
 package com.example.backend.model;
 
-public class Pedidos {
+public class Pedido {
     
 }
