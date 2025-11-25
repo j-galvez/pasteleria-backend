@@ -29,10 +29,7 @@ public class DetallePedido {
 
     @Column(nullable = false)
     private Integer cantidad; 
-
-    @Column(nullable = false)
-    private Double precioUnitario; // Guardar el precio al momento del pedido (evita problemas si el precio de Producto cambia después)
     
     @Column(nullable = false)
-    private Double subtotal; // cantidad * precioUnitario
+    private Double subtotal; // cantidad * precio
 }
