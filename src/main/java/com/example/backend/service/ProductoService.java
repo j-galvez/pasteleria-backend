@@ -32,7 +32,7 @@ public class ProductoService {
     // UPDATE - Actualizar un producto existente
     public Producto actualizarProducto(Long id, Producto productoActualizado) {
         return productoRepository.findById(id).map(producto -> {
-            producto.setNombre(productoActualizado.getNombre());
+            producto.setNombre_producto(productoActualizado.getNombre_producto());
             producto.setPrecio(productoActualizado.getPrecio());
             producto.setDescripcion(productoActualizado.getDescripcion());
             producto.setCategoria(productoActualizado.getCategoria());
