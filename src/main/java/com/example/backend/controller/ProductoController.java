@@ -23,7 +23,7 @@ public class ProductoController {
         Producto nuevoProducto = productoService.crearProducto(producto);
         return new ResponseEntity<>(nuevoProducto, HttpStatus.CREATED);
     }
-
+/* 
     // GET - Obtener todos los productos
     @GetMapping
     public ResponseEntity<List<Producto>> obtenerTodosLosProductos() {
@@ -60,4 +60,5 @@ public class ProductoController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+   */     
 }
