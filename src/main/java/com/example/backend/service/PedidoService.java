@@ -9,6 +9,7 @@ import com.example.backend.model.Usuario;
 import com.example.backend.repository.PedidoRepository;
 import com.example.backend.repository.ProductoRepository;
 import com.example.backend.repository.UsuarioRepository;
+import java.time.LocalDateTime;
 
 import jakarta.transaction.Transactional;
 import java.util.List;
@@ -29,15 +30,6 @@ public class PedidoService {
     // CREATE
     @Transactional
     public Pedido crearPedido(Pedido pedido) {
-        // =========================================================
-    // 0. VERIFICACIÓN CRÍTICA DEL ID (SOLO SI ES INGRESO MANUAL)
-    // =========================================================
-    if (pedido.getIdPedido() == null) {
-        throw new RuntimeException("El ID del pedido es obligatorio y debe ser proporcionado manualmente.");
-    }
-    if (pedidoRepository.existsById(pedido.getIdPedido())) {
-        throw new RuntimeException("El pedido con ID " + pedido.getIdPedido() + " ya existe. No se puede duplicar.");
-    }
         // 1. VALIDAR Y ASIGNAR USUARIO
         String rutUsuario = pedido.getUsuario().getRun();
         Usuario usuarioDB = usuarioRepository.findById(rutUsuario)
@@ -73,6 +65,7 @@ public class PedidoService {
 
         // 3. ASIGNAR TOTAL FINAL Y GUARDAR
         pedido.setTotal(totalPedido);
+        pedido.setFechaPedido(LocalDateTime.now()); // Asegura que la fecha sea la del servidor
         
         // Guardar el Pedido (los DetallePedido se guardan en cascada)
         return pedidoRepository.save(pedido);
