@@ -15,7 +15,7 @@ import java.util.List;
 public class Pedido {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
     private Long idPedido;
 
     @ManyToOne(fetch = FetchType.LAZY)

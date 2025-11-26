@@ -3,7 +3,14 @@ package com.example.backend.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.backend.model.Pedido;
+import com.example.backend.model.DetallePedido;
+import com.example.backend.model.Producto;
+import com.example.backend.model.Usuario;
 import com.example.backend.repository.PedidoRepository;
+import com.example.backend.repository.ProductoRepository;
+import com.example.backend.repository.UsuarioRepository;
+
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,8 +20,61 @@ public class PedidoService {
     @Autowired
     private PedidoRepository pedidoRepository;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+    
+    @Autowired
+    private ProductoRepository productoRepository; // Necesario para obtener precios
+
     // CREATE
+    @Transactional
     public Pedido crearPedido(Pedido pedido) {
+        // =========================================================
+    // 0. VERIFICACIÓN CRÍTICA DEL ID (SOLO SI ES INGRESO MANUAL)
+    // =========================================================
+    if (pedido.getIdPedido() == null) {
+        throw new RuntimeException("El ID del pedido es obligatorio y debe ser proporcionado manualmente.");
+    }
+    if (pedidoRepository.existsById(pedido.getIdPedido())) {
+        throw new RuntimeException("El pedido con ID " + pedido.getIdPedido() + " ya existe. No se puede duplicar.");
+    }
+        // 1. VALIDAR Y ASIGNAR USUARIO
+        String rutUsuario = pedido.getUsuario().getRut();
+        Usuario usuarioDB = usuarioRepository.findById(rutUsuario)
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado con RUT: " + rutUsuario));
+        pedido.setUsuario(usuarioDB);
+
+        Double totalPedido = 0.0;
+        
+        // 2. PROCESAR DETALLES, VALIDAR PRODUCTOS Y CALCULAR TOTALES
+        if (pedido.getDetalles() == null || pedido.getDetalles().isEmpty()) {
+            throw new RuntimeException("El pedido debe contener al menos un producto.");
+        }
+
+        for (DetallePedido detalle : pedido.getDetalles()) {
+            
+            // a. Validar Producto y obtener precio
+            Long idProducto = detalle.getProducto().getId(); // Asumo que Producto tiene getId()
+            Producto productoDB = productoRepository.findById(idProducto)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado con ID: " + idProducto));
+            
+            Double precioUnitario = productoDB.getPrecio(); // Asumo que Producto tiene getPrecio()
+
+            // b. Cálculo
+            Double subtotal = precioUnitario * detalle.getCantidad();
+            
+            // c. Asignación de datos transaccionales
+            detalle.setProducto(productoDB); // Usar la instancia gestionada por JPA
+            detalle.setSubtotal(subtotal);
+            detalle.setPedido(pedido); // Establece la relación bidireccional (¡CRUCIAL!)
+            
+            totalPedido += subtotal;
+        }
+
+        // 3. ASIGNAR TOTAL FINAL Y GUARDAR
+        pedido.setTotal(totalPedido);
+        
+        // Guardar el Pedido (los DetallePedido se guardan en cascada)
         return pedidoRepository.save(pedido);
     }
 

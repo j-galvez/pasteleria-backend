@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Producto {
 
-    // @Id y @GeneratedValue: Configuran 'id' como llave primaria auto-generada.
+    // @Id
     @Id
     @Column(nullable = false)
     private Long id;
