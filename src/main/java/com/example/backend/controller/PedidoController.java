@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/pedidos")
+@RequestMapping("/api/pedido")
 @CrossOrigin(origins = "http://localhost:3000")
 public class PedidoController {
 
