@@ -1,73 +1,58 @@
 package com.example.backend.controller;
 
 import com.example.backend.model.Producto;
-import com.example.backend.model.Usuario;
 import com.example.backend.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/productos")
-@CrossOrigin(origins = "http://localhost:3000") // Permite peticiones desde tu frontend en React/Angular/Vue
+// Permite que React (por defecto en puerto 3000) pueda acceder a esta API
+@CrossOrigin(origins = "http://localhost:3000") 
 public class ProductoController {
 
     @Autowired
     private ProductoService productoService;
 
-        @PostMapping
-    public Producto create(@RequestBody Producto producto){
-        return productoService.crearProducto(producto);
-    }   
+    // GET: http://localhost:8080/api/productos
+    @GetMapping
+    public List<Producto> getAllProductos() {
+        return productoService.findAll();
+    }
 
-
+    // GET: http://localhost:8080/api/productos/categoria/Torta
+    @GetMapping("/categoria/{categoria}")
+    public List<Producto> getProductosByCategoria(@PathVariable String categoria) {
+        return productoService.findByCategoria(categoria);
+    }
     
-/*
-    // POST - Crear un nuevo producto
+    // GET: http://localhost:8080/api/productos/{id}
+    @GetMapping("/{id}")
+    public ResponseEntity<Producto> getProductoById(@PathVariable Long id) {
+        return productoService.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+    
+    // POST: http://localhost:8080/api/productos
     @PostMapping
-    public ResponseEntity<Producto> crearProducto(@RequestBody Producto producto) {
-        Producto nuevoProducto = productoService.crearProducto(producto);
+    // Devuelve 201 Created si el producto es nuevo
+    public ResponseEntity<Producto> createProducto(@RequestBody Producto producto) {
+        // NOTA: Se asume que el objeto 'producto' recibido ya trae un ID válido asignado.
+        Producto nuevoProducto = productoService.save(producto);
         return new ResponseEntity<>(nuevoProducto, HttpStatus.CREATED);
     }
-/* 
-    // GET - Obtener todos los productos
-    @GetMapping
-    public ResponseEntity<List<Producto>> obtenerTodosLosProductos() {
-        List<Producto> productos = productoService.obtenerTodosLosProductos();
-        return new ResponseEntity<>(productos, HttpStatus.OK);
-    }
 
-    // GET - Obtener un producto por ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Producto> obtenerProductoPorId(@PathVariable Long id) {
-        return productoService.obtenerProductoPorId(id)
-                .map(producto -> new ResponseEntity<>(producto, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
-    // PUT - Actualizar un producto
-    @PutMapping("/{id}")
-    public ResponseEntity<Producto> actualizarProducto(@PathVariable Long id, @RequestBody Producto productoActualizado) {
-        try {
-            Producto producto = productoService.actualizarProducto(id, productoActualizado);
-            return new ResponseEntity<>(producto, HttpStatus.OK);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    // DELETE - Eliminar un producto
+    // DELETE: http://localhost:8080/api/productos/{id}
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarProducto(@PathVariable Long id) {
-        try {
-            productoService.eliminarProducto(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<Void> deleteProducto(@PathVariable Long id) {
+        if (productoService.findById(id).isPresent()) {
+            productoService.deleteById(id);
+            return ResponseEntity.noContent().build();
         }
+        return ResponseEntity.notFound().build();
     }
-   */     
 }
