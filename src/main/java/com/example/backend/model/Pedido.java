@@ -19,7 +19,7 @@ public class Pedido {
     private Long idPedido;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuario_rut", referencedColumnName = "rut", nullable = false)
+    @JoinColumn(name = "usuario_run", referencedColumnName = "run", nullable = false)
     private Usuario usuario;
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
