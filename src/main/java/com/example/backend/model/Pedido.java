@@ -1,5 +1,6 @@
 package com.example.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,16 +18,17 @@ import java.util.List;
 @Setter
 public class Pedido {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long idPedido;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-    @JoinColumn(name = "usuario_rut", referencedColumnName = "rut", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_run", referencedColumnName = "run", nullable = false)
     private Usuario usuario;
 
-    @ToString.Exclude // ¡CRUCIAL! Evita el bucle infinito en el método toString()
+    @JsonManagedReference
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DetallePedido> detalles; // Contiene id_producto y cantidad_producto
 
@@ -36,3 +38,25 @@ public class Pedido {
     @Column(nullable = false)
     private Double total; // Total de la suma de todos los subtotales de DetallePedido
 }
+
+ 
+
+
+/*
+    @Id
+    @Column(nullable = false)
+    private Long idPedido;
+
+    @Column(nullable = false)
+    private LocalDateTime fechaPedido = LocalDateTime.now();
+
+    @Column(nullable = false)
+    private Double total;
+
+    @Column(nullable=false)
+    private int cantidad
+    
+}
+
+ */
+

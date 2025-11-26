@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.example.backend.model.Usuario;
 @RestController
 @RequestMapping("/api/usuario")
-@CrossOrigin(origins = "http://localhost:3000")
 
 public class UsuarioController {
 

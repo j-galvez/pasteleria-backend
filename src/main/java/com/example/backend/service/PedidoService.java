@@ -31,7 +31,7 @@ public class PedidoService {
     @Transactional
     public Pedido crearPedido(Pedido pedido) {
         // 1. VALIDAR Y ASIGNAR USUARIO
-        String rutUsuario = pedido.getUsuario().getRut();
+        String rutUsuario = pedido.getUsuario().getRun();
         Usuario usuarioDB = usuarioRepository.findById(rutUsuario)
             .orElseThrow(() -> new RuntimeException("Usuario no encontrado con RUT: " + rutUsuario));
         pedido.setUsuario(usuarioDB);

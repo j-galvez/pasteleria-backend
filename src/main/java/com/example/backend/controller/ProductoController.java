@@ -1,6 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.model.Producto;
+import com.example.backend.model.Usuario;
 import com.example.backend.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,14 @@ public class ProductoController {
     @Autowired
     private ProductoService productoService;
 
+        @PostMapping
+    public Producto create(@RequestBody Producto producto){
+        return productoService.crearProducto(producto);
+    }   
+
+
+    
+/*
     // POST - Crear un nuevo producto
     @PostMapping
     public ResponseEntity<Producto> crearProducto(@RequestBody Producto producto) {

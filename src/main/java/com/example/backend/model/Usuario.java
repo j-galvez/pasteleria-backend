@@ -1,6 +1,7 @@
 package com.example.backend.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 import lombok.*;
 
 
@@ -14,19 +15,19 @@ public class Usuario {
 
     @Id
     @Column(nullable = false, length=10)
-    private String rut;
+    private String run;
 
     @Column(nullable = false, length=40)
     private String nombre;
 
     @Column(nullable = false, length=40)
-    private String apellido;
+    private String apellidos;
 
     @Column(nullable = false, length=40)
     private String correo;
 
     @Column(nullable = false, length=40)
-    private String contrasena;
+    private String password;
 
     @Column(nullable = false, length=40)
     private String direccion;
@@ -37,11 +38,11 @@ public class Usuario {
     @Column(nullable = false, length=40)
     private String comuna;
 
-    @Column(nullable = false, length=40)
-    private String fecha_nac;
+    @Column(nullable = false)
+    private LocalDate fechaNac;
 
     @Column(length=40)
-    private String cod_descuento;
+    private String codigo;
 
     
 }
