@@ -39,7 +39,7 @@ public class PedidoService {
         throw new RuntimeException("El pedido con ID " + pedido.getIdPedido() + " ya existe. No se puede duplicar.");
     }
         // 1. VALIDAR Y ASIGNAR USUARIO
-        String rutUsuario = pedido.getUsuario().getRut();
+        String rutUsuario = pedido.getUsuario().getRun();
         Usuario usuarioDB = usuarioRepository.findById(rutUsuario)
             .orElseThrow(() -> new RuntimeException("Usuario no encontrado con RUT: " + rutUsuario));
         pedido.setUsuario(usuarioDB);
