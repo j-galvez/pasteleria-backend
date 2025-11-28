@@ -27,9 +27,12 @@ public class ProductoService {
     public Producto save(Producto producto) {
         return productoRepository.save(producto);
     }
-    
-    // Elimina un producto
-    public void deleteById(Long id) {
+
+    // DELETE - Eliminar un producto
+    public void eliminarProducto(Long id) {
+        if (!productoRepository.existsById(id)) {
+            throw new RuntimeException("Producto no encontrado");
+        }
         productoRepository.deleteById(id);
     }
     

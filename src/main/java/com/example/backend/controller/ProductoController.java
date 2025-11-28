@@ -10,14 +10,18 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/productos")
-// Permite que React (por defecto en puerto 3000) pueda acceder a esta API
-@CrossOrigin(origins = "http://localhost:3000") 
+@CrossOrigin(origins = "http://localhost:3000", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 public class ProductoController {
 
     @Autowired
     private ProductoService productoService;
 
-    // GET: http://localhost:8080/api/productos
+        @PostMapping
+    public Producto create(@RequestBody Producto producto){
+        return productoService.crearProducto(producto);
+    }   
+
+    // GET - Obtener todos los productos
     @GetMapping
     public List<Producto> getAllProductos() {
         return productoService.findAll();
@@ -55,4 +59,5 @@ public class ProductoController {
         }
         return ResponseEntity.notFound().build();
     }
+    
 }
