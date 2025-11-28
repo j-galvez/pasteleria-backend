@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/productos")
-@CrossOrigin(origins = "http://localhost:3000") // Permite peticiones desde tu frontend en React/Angular/Vue
+@CrossOrigin(origins = "http://localhost:3000", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 public class ProductoController {
 
     @Autowired
@@ -23,16 +23,6 @@ public class ProductoController {
         return productoService.crearProducto(producto);
     }   
 
-
-    
-/*
-    // POST - Crear un nuevo producto
-    @PostMapping
-    public ResponseEntity<Producto> crearProducto(@RequestBody Producto producto) {
-        Producto nuevoProducto = productoService.crearProducto(producto);
-        return new ResponseEntity<>(nuevoProducto, HttpStatus.CREATED);
-    }
-/* 
     // GET - Obtener todos los productos
     @GetMapping
     public ResponseEntity<List<Producto>> obtenerTodosLosProductos() {
@@ -69,5 +59,5 @@ public class ProductoController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-   */     
+    
 }
