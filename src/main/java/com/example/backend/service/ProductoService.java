@@ -4,7 +4,6 @@ import com.example.backend.model.Producto;
 import com.example.backend.repository.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -14,30 +13,19 @@ public class ProductoService {
     @Autowired
     private ProductoRepository productoRepository;
 
-    // CREATE - Crear un nuevo producto
-    public Producto crearProducto(Producto producto) {
-        return productoRepository.save(producto);
-    }
-
-    // READ - Obtener todos los productos
-    public List<Producto> obtenerTodosLosProductos() {
+    // Obtiene todos los productos
+    public List<Producto> findAll() {
         return productoRepository.findAll();
     }
 
-    // READ - Obtener un producto por su ID
-    public Optional<Producto> obtenerProductoPorId(Long id) {
+    // Obtiene un producto por su ID
+    public Optional<Producto> findById(Long id) {
         return productoRepository.findById(id);
     }
-
-    // UPDATE - Actualizar un producto existente
-    public Producto actualizarProducto(Long id, Producto productoActualizado) {
-        return productoRepository.findById(id).map(producto -> {
-            producto.setNombre_producto(productoActualizado.getNombre_producto());
-            producto.setPrecio(productoActualizado.getPrecio());
-            producto.setDescripcion(productoActualizado.getDescripcion());
-            producto.setCategoria(productoActualizado.getCategoria());
-            return productoRepository.save(producto);
-        }).orElseThrow(() -> new RuntimeException("Producto no encontrado con ID: " + id));
+    
+    // Guarda o actualiza un producto (El ID debe ser provisto por el cliente para la creación)
+    public Producto save(Producto producto) {
+        return productoRepository.save(producto);
     }
 
     // DELETE - Eliminar un producto
@@ -46,5 +34,10 @@ public class ProductoService {
             throw new RuntimeException("Producto no encontrado");
         }
         productoRepository.deleteById(id);
+    }
+    
+    // Método clave para filtrar por categoría (usado por los componentes JSX)
+    public List<Producto> findByCategoria(String categoria) {
+        return productoRepository.findByCategoria(categoria);
     }
 }
