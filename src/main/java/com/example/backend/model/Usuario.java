@@ -1,6 +1,8 @@
 package com.example.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDate;
 import lombok.*;
 
@@ -11,6 +13,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Usuario {
 
     @Id
@@ -26,6 +29,7 @@ public class Usuario {
     @Column(nullable = false, length=40)
     private String correo;
 
+    @JsonIgnore
     @Column(nullable = false, length=40)
     private String password;
 

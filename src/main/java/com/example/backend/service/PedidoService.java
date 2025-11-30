@@ -77,15 +77,59 @@ public class PedidoService {
     }
 
     // UPDATE
-    public Pedido actualizarPedido(Long idPedido, Pedido pedidoActualizado) {
-        return pedidoRepository.findById(idPedido).map(pedido -> {
-            pedido.setUsuario(pedidoActualizado.getUsuario());
-            pedido.setDetalles(pedidoActualizado.getDetalles());
-            pedido.setFechaPedido(pedidoActualizado.getFechaPedido());
-            pedido.setTotal(pedidoActualizado.getTotal());
-            return pedidoRepository.save(pedido);
-        }).orElseThrow(() -> new RuntimeException("Pedido no encontrado con ID: " + idPedido));
+    @Transactional
+public Pedido actualizarPedido(Long idPedido, Pedido pedidoActualizado) {
+
+    Pedido pedidoDB = pedidoRepository.findById(idPedido)
+            .orElseThrow(() -> new RuntimeException("Pedido no encontrado con ID: " + idPedido));
+
+    // 1. ACTUALIZAR USUARIO SOLO SI CAMBIA
+    if (pedidoActualizado.getUsuario() != null) {
+        String runUsuario = pedidoActualizado.getUsuario().getRun();
+        Usuario usuarioDB = usuarioRepository.findById(runUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + runUsuario));
+        pedidoDB.setUsuario(usuarioDB);
     }
+
+    // 2. ACTUALIZAR FECHA DEL PEDIDO (si viene)
+    if (pedidoActualizado.getFechaPedido() != null) {
+        pedidoDB.setFechaPedido(pedidoActualizado.getFechaPedido());
+    }
+
+    // 3. ACTUALIZAR DETALLES DEL PEDIDO (si vienen)
+    if (pedidoActualizado.getDetalles() != null) {
+
+        // LIMPIAR DETALLES ANTERIORES
+        pedidoDB.getDetalles().clear();
+
+        double total = 0;
+
+        for (DetallePedido nuevo : pedidoActualizado.getDetalles()) {
+
+            // Validar producto
+            Long idProd = nuevo.getProducto().getId();
+            var productoDB = productoRepository.findById(idProd)
+                    .orElseThrow(() -> new RuntimeException("Producto no encontrado: " + idProd));
+
+            // Crear nuevo detalle
+            DetallePedido detalle = new DetallePedido();
+            detalle.setProducto(productoDB);
+            detalle.setCantidad(nuevo.getCantidad());
+            detalle.setSubtotal(productoDB.getPrecio() * nuevo.getCantidad());
+            detalle.setPedido(pedidoDB);
+
+            pedidoDB.getDetalles().add(detalle);
+
+            total += detalle.getSubtotal();
+        }
+
+        pedidoDB.setTotal(total);
+    }
+
+    // GUARDAR TODO
+    return pedidoRepository.save(pedidoDB);
+}
+
 
     // DELETE
     public void eliminarPedido(Long idPedido) {

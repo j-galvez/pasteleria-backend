@@ -10,14 +10,20 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/productos")
-// Permite que React (por defecto en puerto 3000) pueda acceder a esta API
-@CrossOrigin(origins = "http://localhost:3000") 
+@CrossOrigin(origins = "http://localhost:3000", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 public class ProductoController {
 
     @Autowired
     private ProductoService productoService;
 
-    // GET: http://localhost:8080/api/productos
+        // POST - Crear producto
+    @PostMapping
+    public ResponseEntity<Producto> createProducto(@RequestBody Producto producto) {
+        Producto nuevoProducto = productoService.save(producto);
+        return new ResponseEntity<>(nuevoProducto, HttpStatus.CREATED);
+    }
+
+    // GET - Obtener todos los productos
     @GetMapping
     public List<Producto> getAllProductos() {
         return productoService.findAll();
@@ -36,23 +42,27 @@ public class ProductoController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-    
-    // POST: http://localhost:8080/api/productos
-    @PostMapping
-    // Devuelve 201 Created si el producto es nuevo
-    public ResponseEntity<Producto> createProducto(@RequestBody Producto producto) {
-        // NOTA: Se asume que el objeto 'producto' recibido ya trae un ID válido asignado.
-        Producto nuevoProducto = productoService.save(producto);
-        return new ResponseEntity<>(nuevoProducto, HttpStatus.CREATED);
+
+    // PUT - Actualizar
+    @PutMapping("/{id}")
+    public ResponseEntity<Producto> updateProducto(@PathVariable Long id, @RequestBody Producto producto) {
+        if (productoService.findById(id).isPresent()) {
+            producto.setId(id);
+            Producto updatedProducto = productoService.save(producto);
+            return ResponseEntity.ok(updatedProducto);
+        }
+        return ResponseEntity.notFound().build();
     }
 
-    // DELETE: http://localhost:8080/api/productos/{id}
+
+    // DELETE - Eliminar
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProducto(@PathVariable Long id) {
         if (productoService.findById(id).isPresent()) {
-            productoService.deleteById(id);
+            productoService.eliminarProducto(id);
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
     }
+    
 }
