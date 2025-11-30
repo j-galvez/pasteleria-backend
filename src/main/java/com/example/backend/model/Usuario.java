@@ -44,5 +44,8 @@ public class Usuario {
     @Column(length=40)
     private String codigo;
 
+    @Column(nullable = false, length = 20)
+    private String rol = "USER";
+
     
 }
