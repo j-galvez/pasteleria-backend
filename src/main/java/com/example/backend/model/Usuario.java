@@ -29,7 +29,6 @@ public class Usuario {
     @Column(nullable = false, length=40)
     private String correo;
 
-    @JsonIgnore
     @Column(nullable = false, length=40)
     private String password;
 

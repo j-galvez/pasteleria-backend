@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import com.example.backend.model.Usuario;
 import com.example.backend.service.UsuarioService;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping("/api/usuario")
-
+@CrossOrigin(origins = "http://localhost:3000")
 public class UsuarioController {
 
     @Autowired
@@ -25,7 +26,17 @@ public class UsuarioController {
 
     @PostMapping
     public Usuario create(@RequestBody Usuario usuario){
-        usuario.setRol("USER");
+        System.out.println("DEBUG - Usuario recibido en controller:");
+        System.out.println("  run: " + usuario.getRun());
+        System.out.println("  nombre: " + usuario.getNombre());
+        System.out.println("  password: " + usuario.getPassword());
+        System.out.println("  rol: " + usuario.getRol());
+        
+        // Solo asignar rol si es null
+        if (usuario.getRol() == null || usuario.getRol().isEmpty()) {
+            usuario.setRol("USER");
+        }
+        
         return usuarioService.crearUsuario(usuario);
     }
 
@@ -48,6 +59,4 @@ public class UsuarioController {
     public void delete(@PathVariable String run){
         usuarioService.delete(run);
     }
-
-    
 }
